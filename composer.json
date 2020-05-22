@@ -1,0 +1,10 @@
+{
+    "name": "sameyasu/phpcs-added-lines",
+    "description": "phpcs filter by added lines.",
+    "type": "library",
+    "require": {
+        "sebastian/diff": "^3.0",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "license": "BSD-3-Clause"
+}
