@@ -24,7 +24,7 @@ trait StderrLoggerTrait
 
         $streamHandler = new StreamHandler('php://stderr', \Monolog\Logger::DEBUG);
         $formatter = new LineFormatter(
-            null, // use default
+            "[%level_name%] %message% %context% %extra%\n", // logging format
             null, // use default
             true, // allowInlineLineBreaks: true
             true  // ignoreEmptyContextAndExtra: true
