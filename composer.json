@@ -18,5 +18,8 @@
         "platform": {
             "php": "7.2"
         }
-    }
+    },
+    "bin": [
+        "bin/phpcs-added-lines"
+    ]
 }
