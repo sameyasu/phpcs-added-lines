@@ -9,6 +9,8 @@ class Runner
 {
     use Logger\StderrLoggerTrait;
 
+    public const EXIT_CODE_INVALID_ARGUMENTS = 3;
+
     /**
      * Constructor
      */
@@ -35,6 +37,20 @@ class Runner
                 $argv[] = $v;
             }
         }
+
+        // Parsing git-diff text
+        $parser = new DiffParser();
+        $diffs = $parser->parseDiffOnlyAddedLines($this->readFromStdin());
+
+        if (sizeof($diffs) === 0) {
+            $this->logger->error('No diff text found');
+            return self::EXIT_CODE_INVALID_ARGUMENTS;
+        }
+        // Appending modified file names to argv
+        foreach (array_keys($diffs) as $filename) {
+            $argv[] = $filename;
+        }
+
         $this->logger->debug('Runtime Arguments', ['argv' => $argv]);
 
         // Override PHPCS runtime arguments
@@ -47,7 +63,17 @@ class Runner
 
         $this->logger->debug('Result', ['exitCode' => $exitCode]);
 
-        $json = json_decode($result, true);
+        // Note: PHPCS exit code
+        // 0: No errors found.
+        // 1: Errors found, but none of them can be fixed by PHPCBF.
+        // 2: Errors found, and some can be fixed by PHPCBF.
+        if ($exitCode !== 0 && $exitCode !== 1 && $exitCode !== 2) {
+            echo $result;
+            // Returns original exit code.
+            return $exitCode;
+        }
+
+        $report = json_decode($result, true);
         $errorCode = json_last_error();
         if ($errorCode !== JSON_ERROR_NONE) {
             $this->logger->error('Failed to run PHPCS', [
@@ -60,9 +86,13 @@ class Runner
             ]);
         } else {
             $this->logger->debug('PHPCS ran successfully');
+
+            $filter = new PhpcsReportFilter();
+            $filtered = $filter->filterOutUnmodifiedLines($report, $diffs);
+
+            echo json_encode($filtered);
         }
 
-        echo $result;
         return $exitCode;
     }
 
@@ -97,5 +127,15 @@ class Runner
     private function startsWith(string $text, string $part)
     {
         return strlen($text) >= strlen($part) && strpos($text, 0, strlen($part)) === $part;
+    }
+
+    /**
+     * Reads string from stdin.
+     *
+     * @return string
+     */
+    private function readFromStdin(): string
+    {
+        return file_get_contents('php://stdin');
     }
 }
