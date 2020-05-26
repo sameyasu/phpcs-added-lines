@@ -22,7 +22,7 @@ trait StderrLoggerTrait
     {
         $logger = new \Monolog\Logger(__CLASS__);
 
-        $streamHandler = new StreamHandler('php://stderr', \Monolog\Logger::DEBUG);
+        $streamHandler = new StreamHandler('php://stderr', \Monolog\Logger::ERROR);
         $formatter = new LineFormatter(
             "[%level_name%] %message% %context% %extra%\n", // logging format
             null, // use default
