@@ -1,6 +1,6 @@
 {
     "name": "sameyasu/phpcs-added-lines",
-    "description": "phpcs filter by added lines.",
+    "description": "phpcs wrapper for filtering report based on diff text."
     "type": "library",
     "require": {
         "sebastian/diff": "^3.0",
