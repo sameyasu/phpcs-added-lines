@@ -16,13 +16,14 @@ trait StderrLoggerTrait
     /**
      * Initialize $this->logger property.
      *
+     * @param int $logLevel default: ERROR
      * @return void
      */
-    protected function initLogger(): void
+    protected function initLogger(int $logLevel = \Monolog\Logger::ERROR): void
     {
         $logger = new \Monolog\Logger(__CLASS__);
 
-        $streamHandler = new StreamHandler('php://stderr', \Monolog\Logger::ERROR);
+        $streamHandler = new StreamHandler('php://stderr', $logLevel);
         $formatter = new LineFormatter(
             "[%level_name%] %message% %context% %extra%\n", // logging format
             null, // use default
@@ -31,7 +32,9 @@ trait StderrLoggerTrait
         );
         $streamHandler->setFormatter($formatter);
 
-        $logger->pushHandler($streamHandler);
+        $logger->setHandlers([
+            $streamHandler
+        ]);
 
         $this->setLogger($logger);
     }
