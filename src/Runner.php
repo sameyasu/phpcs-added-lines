@@ -12,20 +12,16 @@ class Runner
     public const EXIT_CODE_INVALID_ARGUMENTS = 3;
 
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->initLogger();
-    }
-
-    /**
      * Runs PHPCS and then filters out unmodified lines.
      *
      * @return int exitCode
      */
     public function run(): int
     {
+        $this->initLogger(
+            $this->isDebugging() ? \Monolog\Logger::DEBUG : \Monolog\Logger::ERROR
+        );
+
         $argv = [
             $_SERVER['argv'][0],
             '--no-colors',
@@ -137,5 +133,16 @@ class Runner
     private function readFromStdin(): string
     {
         return file_get_contents('php://stdin');
+    }
+
+    /**
+     * Wether it is debugging mode.
+     *
+     * @return bool
+     */
+    private function isDebugging(): bool
+    {
+        $debugging = getenv('DEBUGGING');
+        return !empty($debugging) && $debugging;
     }
 }
