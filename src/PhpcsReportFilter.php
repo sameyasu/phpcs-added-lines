@@ -21,9 +21,9 @@ class PhpcsReportFilter
     {
         if (isset($phpcsReport['files'])) {
             $filtered = $phpcsReport['files'];
-            $total_errors = 0;
-            $total_warnings = 0;
-            $total_fixable = 0;
+            $totalErrors = 0;
+            $totalWarnings = 0;
+            $totalFixable = 0;
 
             foreach ($phpcsReport['files'] as $filename => $report) {
                 if (isset($diffArray[$filename])) {
@@ -38,16 +38,16 @@ class PhpcsReportFilter
                                 // it's matched with added line
                                 if ($msg['type'] === 'ERROR') {
                                     $errors++;
-                                    $total_errors++;
+                                    $totalErrors++;
                                     $messages[] = $msg;
                                 } elseif ($msg['type'] === 'WARNING') {
                                     $warnings++;
-                                    $total_warnings++;
+                                    $totalWarnings++;
                                     $messages[] = $msg;
                                 }
 
                                 if ($msg['fixable'] === true) {
-                                    $total_fixable++;
+                                    $totalFixable++;
                                 }
                             }
                         }
@@ -63,9 +63,9 @@ class PhpcsReportFilter
 
             $filteredIssues = [
                 'totals' => [
-                    'errors' => $total_errors,
-                    'warnings' => $total_warnings,
-                    'fixable' => $total_fixable,
+                    'errors' => $totalErrors,
+                    'warnings' => $totalWarnings,
+                    'fixable' => $totalFixable,
                 ],
                 'files' => $filtered
             ];
