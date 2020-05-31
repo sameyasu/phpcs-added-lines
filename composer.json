@@ -24,5 +24,8 @@
     },
     "bin": [
         "bin/phpcs-added-lines"
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^8.5"
+    }
 }
