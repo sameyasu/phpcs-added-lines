@@ -26,11 +26,16 @@ class DiffParser
         foreach ($diffs as $diff) {
             $lineNums = [];
             foreach ($diff->getChunks() as $chunk) {
+                $lineNum = 0;
                 foreach ($chunk->getLines() as $num => $line) {
-                    if ($line->getType() === Line::ADDED) {
-                        $lineNum = ($chunk->getStart() === 0) ? $num + $chunk->getEnd() : $num + $chunk->getEnd() - 1;
-                        $lineNums[$lineNum]['content'] = $line->getContent();
-                        $lineNums[$lineNum]['position'] = $num + 1;
+                    if (
+                        $line->getType() === Line::UNCHANGED ||
+                        $line->getType() === Line::ADDED
+                    ) {
+                        $lineNum = ($lineNum === 0) ? $num + $chunk->getEnd() : $lineNum + 1;
+                        if ($line->getType() === Line::ADDED) {
+                            $lineNums[$lineNum] = $line->getContent();
+                        }
                     }
                 }
             }
