@@ -122,7 +122,7 @@ class Runner
      */
     private function startsWith(string $text, string $part)
     {
-        return strlen($text) >= strlen($part) && strpos($text, 0, strlen($part)) === $part;
+        return strlen($text) >= strlen($part) && strpos($text, $part) === 0;
     }
 
     /**
