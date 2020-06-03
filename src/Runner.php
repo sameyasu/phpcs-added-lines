@@ -31,6 +31,8 @@ class Runner
         foreach (array_slice($_SERVER['argv'], 1) as $v) {
             if (!$this->matchesIgnoringArgs($v)) {
                 $argv[] = $v;
+            } else {
+                $this->logger->debug('Ignored', ['arg' => $v]);
             }
         }
 
