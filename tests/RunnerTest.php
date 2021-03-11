@@ -17,6 +17,10 @@ class RunnerTest extends TestCase
             {
                 return $this->matchesIgnoringArgs($arg);
             }
+            public function callGetExitCode(array $report): int
+            {
+                return $this->getExitCode($report);
+            }
         };
     }
 
@@ -48,5 +52,41 @@ class RunnerTest extends TestCase
     public function testMatchesIgnoringArgs6(): void
     {
         $this->assertFalse($this->runner->callMatchesIgnoringArgs(''));
+    }
+
+    public function testGetExitCodeNoErrors(): void
+    {
+        $report = [
+            'totals' => [
+                'errors' => 0,
+                'warnings' => 0,
+                'fixable' => 0,
+            ],
+        ];
+        $this->assertSame(0, $this->runner->callGetExitCode($report));
+    }
+
+    public function testGetExitCodeErrorsFoundNoFixables(): void
+    {
+        $report = [
+            'totals' => [
+                'errors' => 0,
+                'warnings' => 1,
+                'fixable' => 0,
+            ],
+        ];
+        $this->assertSame(1, $this->runner->callGetExitCode($report));
+    }
+
+    public function testGetExitCodeErrorsFoundSomeFixables(): void
+    {
+        $report = [
+            'totals' => [
+                'errors' => 1,
+                'warnings' => 1,
+                'fixable' => 1,
+            ],
+        ];
+        $this->assertSame(2, $this->runner->callGetExitCode($report));
     }
 }
