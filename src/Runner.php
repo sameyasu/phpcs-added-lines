@@ -89,6 +89,9 @@ class Runner
             $filtered = $filter->filterOutUnmodifiedLines($report, $diffs);
 
             echo json_encode($filtered);
+
+            $exitCode = $this->getExitCode($filtered);
+            $this->logger->debug('Filtered Result', ['exitCode' => $exitCode]);
         }
 
         return $exitCode;
@@ -113,6 +116,26 @@ class Runner
             return true;
         }
         return false;
+    }
+
+    /**
+     * Gets exit code by report.
+     *
+     * @param array $report
+     * @return int
+     */
+    protected function getExitCode(array $report): int
+    {
+        if (($report['totals']['errors'] ?? 0) === 0 && ($report['totals']['warnings'] ?? 0) === 0) {
+            // 0: No errors found.
+            return 0;
+        } elseif (($report['totals']['fixable'] ?? 0) === 0) {
+            // 1: Errors found, but none of them can be fixed by PHPCBF.
+            return 1;
+        } else {
+            // 2: Errors found, and some can be fixed by PHPCBF.
+            return 2;
+        }
     }
 
     /**
