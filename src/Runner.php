@@ -9,7 +9,9 @@ class Runner
 {
     use Logger\StderrLoggerTrait;
 
-    public const EXIT_CODE_INVALID_ARGUMENTS = 3;
+    public const EXIT_CODE_NO_ERRORS_FOUND = 0;
+    public const EXIT_CODE_ERRORS_FOUND_NOT_FIXABLE = 1;
+    public const EXIT_CODE_ERRORS_FOUND_FIXABLE_BY_PHPCBF = 2;
 
     /**
      * Runs PHPCS and then filters out unmodified lines.
@@ -41,8 +43,8 @@ class Runner
         $diffs = $parser->parseDiffOnlyAddedLines($this->readFromStdin());
 
         if (sizeof($diffs) === 0) {
-            $this->logger->error('No diff text found');
-            return self::EXIT_CODE_INVALID_ARGUMENTS;
+            $this->logger->info('No added lines found');
+            return self::EXIT_CODE_NO_ERRORS_FOUND;
         }
         // Appending modified file names to argv
         foreach (array_keys($diffs) as $filename) {
@@ -65,7 +67,11 @@ class Runner
         // 0: No errors found.
         // 1: Errors found, but none of them can be fixed by PHPCBF.
         // 2: Errors found, and some can be fixed by PHPCBF.
-        if ($exitCode !== 0 && $exitCode !== 1 && $exitCode !== 2) {
+        if (
+            $exitCode !== self::EXIT_CODE_NO_ERRORS_FOUND &&
+            $exitCode !== self::EXIT_CODE_ERRORS_FOUND_NOT_FIXABLE &&
+            $exitCode !== self::EXIT_CODE_ERRORS_FOUND_FIXABLE_BY_PHPCBF
+        ) {
             echo $result;
             // Returns original exit code.
             return $exitCode;
