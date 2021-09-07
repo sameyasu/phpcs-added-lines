@@ -9,7 +9,7 @@ class Runner
 {
     use Logger\StderrLoggerTrait;
 
-    public const EXIT_CODE_INVALID_ARGUMENTS = 3;
+    public const EXIT_CODE_NO_ERRORS_FOUND = 0;
 
     /**
      * Runs PHPCS and then filters out unmodified lines.
@@ -41,8 +41,8 @@ class Runner
         $diffs = $parser->parseDiffOnlyAddedLines($this->readFromStdin());
 
         if (sizeof($diffs) === 0) {
-            $this->logger->error('No diff text found');
-            return self::EXIT_CODE_INVALID_ARGUMENTS;
+            $this->logger->info('No added lines found');
+            return self::EXIT_CODE_NO_ERRORS_FOUND;
         }
         // Appending modified file names to argv
         foreach (array_keys($diffs) as $filename) {
