@@ -5,6 +5,8 @@ This is `phpcs` wrapper for filtering report based on diff text.
 - Filters by added/modified line ranges.
 - JSON reporting only.
 
+![Test Status](https://github.com/sameyasu/phpcs-added-lines/actions/workflows/test.yaml/badge.svg)
+
 ## Installation
 
 ```
